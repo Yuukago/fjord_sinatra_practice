@@ -1,0 +1,123 @@
+body {
+  text-align: center;
+  font-family: "ヒラギノ丸ゴ ProN";
+}
+
+h1 {
+  color: #8db8de;
+  font-size: 60px;
+  margin: 10px;
+}
+
+p {
+  margin: 0;
+}
+
+.display-wrapper, li {
+  border: 2px solid #d0d9e8;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.display-wrapper {
+  padding: 30px;
+  width: 400px;
+  margin: 30px auto;
+  color: rgb(117, 119, 214);
+}
+
+li {
+  list-style: none;
+  padding: 20px;
+  width: 400px;
+  margin: 15px auto;
+}
+
+li a {
+  text-decoration: none;
+  color: rgb(117, 119, 214);
+}
+
+.display-title {
+  border-bottom: 2px dashed #acbce1;
+}
+
+.attention {
+  color: rgb(253, 108, 108);
+  margin-top: 10px;
+}
+
+ul {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.invisible-label {
+  display: none;
+}
+
+.delete-wrapper {
+  text-align: center;
+  margin: 10px auto;
+}
+
+.delete-text {
+  text-align: right;
+  margin-top: 20px;
+}
+
+.delete-text a {
+  font-size: 14px;
+  color: #999;
+  text-decoration: none;
+}
+
+.delete-text a:hover {
+  color: #f55;
+  text-decoration: underline;
+}
+
+.form-box {
+  width: 400px;
+  margin: 30px auto;
+}
+
+.form-box label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+  color: #445;
+}
+
+.form-box input[type="text"],
+.form-box textarea {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+/* ボタン */
+button, .all-button {
+  display: block;
+  margin: auto;
+  padding: 7px;
+  font-weight: bold;
+  border-radius: 8px;
+  border: solid 2px rgb(200, 208, 243);
+  cursor: pointer;
+  background-color: #a4c9ea;
+  color: #3a5bd3;
+}
+
+.return-button{
+  background-color: #c7d1da;
+  display: block;
+  margin: 5px auto;
+  padding: 7px;
+  font-weight: bold;
+  border-radius: 8px;
+  border: solid 2px rgb(200, 208, 243);
+  cursor: pointer;
+  color: #242a3d;
+}

@@ -1,0 +1,16 @@
+<p>登録したい内容を入力してください</p>
+<p class="attention">※メモタイトルは必須です</p>
+
+<div class="form-box">
+  <form action="/new" method="post">
+   <label for="title" class="invisible-label">
+   <input type="text" name="title" placeholder="タイトル">
+   </label>
+   <label for="message" class="invisible-label">
+   <textarea name="message" rows="15" cols="20" placeholder="説明"></textarea>
+   </label>
+   <input type="submit" value="保存" class="all-button">
+  </form>
+
+  <input type="button" onclick="location.href='/'" value="戻る" class="return-button">
+</div>
