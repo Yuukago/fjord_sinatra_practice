@@ -6,7 +6,7 @@ enable :method_override
 
 def load_data
   json_text = File.read('db.json')
-  json_text = "{'last_id': 0, 'memos': []}" if json_text.empty?
+  json_text = '{"last_id": 0, "memos": []}' if json_text.empty?
   JSON.parse(json_text)
 end
 
@@ -14,29 +14,31 @@ def save_data(record_data)
   File.open('db.json', 'w') { |file| file.write(JSON.generate(record_data)) }
 end
 
-def display_memo(id_number)
+def find_memo(id)
   data_converted_to_ruby = load_data
-  data_converted_to_ruby['memos'].find { |memo| memo['id'] == id_number }
+  data_converted_to_ruby['memos'].find { |memo| memo['id'] == id }
+end
+
+helpers do
+  def h(text)
+    Rack::Utils.escape_html(text)
+  end
 end
 
 # Top
 get '/' do
-  data_converted_to_ruby = load_data
-  id_and_title = data_converted_to_ruby['memos'].map do |data|
-    [data['id'], data['title']]
-  end
-  @list = id_and_title.map { |memo| "<li><a href='/#{memo[0]}'>#{memo[1]}</a></li>" }.join
+  @data_converted_to_ruby = load_data
 
   erb :top
 end
 
 # New
-get '/new' do
+get '/memos/new' do
   erb :new
 end
 
-post '/new' do
-  redirect '/new' if params['title'].empty?
+post '/memos' do
+  redirect '/memos/new' if params['title'].empty?
 
   data_converted_to_ruby = load_data
   id = data_converted_to_ruby['last_id'] += 1
@@ -50,20 +52,20 @@ post '/new' do
 end
 
 # Show
-get '/:id' do
-  @display_memo = display_memo(params['id'].to_i)
+get '/memos/:id' do
+  @target_memo = find_memo(params['id'].to_i)
 
   erb :show
 end
 
 # Edit
-get '/:id/edit' do
-  @display_memo = display_memo(params['id'].to_i)
+get '/memos/:id/edit' do
+  @target_memo = find_memo(params['id'].to_i)
 
   erb :edit
 end
 
-patch '/:id/edit' do
+patch '/memos/:id' do
   data_converted_to_ruby = load_data
   edit_memo = data_converted_to_ruby['memos'].find { |memo| memo['id'] == params['id'].to_i }
 
@@ -71,17 +73,17 @@ patch '/:id/edit' do
   edit_memo['message'] = params['message']
   save_data(data_converted_to_ruby)
 
-  redirect "/#{params['id']}"
+  redirect "memos/#{params['id']}"
 end
 
 # Delete
-get '/:id/delete' do
-  @display_memo = display_memo(params[:id].to_i)
+get '/memos/:id/delete_confirmation' do
+  @target_memo = find_memo(params[:id].to_i)
 
-  erb :delete
+  erb :delete_confirmation
 end
 
-delete '/:id/delete' do
+delete '/memos/:id' do
   data_converted_to_ruby = load_data
   data_converted_to_ruby['memos'].delete_if { |memo| memo['id'] == params['id'].to_i }
   save_data(data_converted_to_ruby)
