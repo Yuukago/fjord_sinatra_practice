@@ -1,9 +1,9 @@
 <button onclick="location.href='memos/new'">追加</button>
 
 <ul>
-  <% @data_converted_to_ruby["memos"].each do |memo| %>
+  <% @memos_data[:memos].each do |memo| %>
    <li>
-      <a href='/memos/<%= memo["id"] %>'><%= h(memo["title"]) %></a>
+      <a href='/memos/<%= memo[:id] %>'><%= h(memo[:title]) %></a>
    </li>
   <% end %>
 </ul>

@@ -7,7 +7,7 @@ enable :method_override
 def load_data
   json_text = File.read('db.json')
   json_text = '{"last_id": 0, "memos": []}' if json_text.empty?
-  JSON.parse(json_text)
+  JSON.parse(json_text, symbolize_names: true)
 end
 
 def save_data(record_data)
@@ -15,8 +15,8 @@ def save_data(record_data)
 end
 
 def find_memo(id)
-  data_converted_to_ruby = load_data
-  data_converted_to_ruby['memos'].find { |memo| memo['id'] == id }
+  memos_data = load_data
+  memos_data[:memos].find { |memo| memo[:id] == id }
 end
 
 helpers do
@@ -27,7 +27,7 @@ end
 
 # Top
 get '/' do
-  @data_converted_to_ruby = load_data
+  @memos_data = load_data
 
   erb :top
 end
@@ -38,42 +38,41 @@ get '/memos/new' do
 end
 
 post '/memos' do
-  redirect '/memos/new' if params['title'].empty?
+  redirect '/memos/new' if params[:title].empty?
 
-  data_converted_to_ruby = load_data
-  id = data_converted_to_ruby['last_id'] += 1
-  title = params['title']
-  message = params['message']
-  data_converted_to_ruby['memos'] << { 'id' => id, 'title' => title, 'message' => message }
+  memos_data = load_data
+  id = memos_data[:last_id] += 1
+  memo_data = params.slice(:title, :message).merge(id: id)
+  memos_data[:memos] << memo_data
 
-  save_data(data_converted_to_ruby)
+  save_data(memos_data)
 
   redirect '/'
 end
 
 # Show
 get '/memos/:id' do
-  @target_memo = find_memo(params['id'].to_i)
+  @target_memo = find_memo(params[:id].to_i)
 
   erb :show
 end
 
 # Edit
 get '/memos/:id/edit' do
-  @target_memo = find_memo(params['id'].to_i)
+  @target_memo = find_memo(params[:id].to_i)
 
   erb :edit
 end
 
 patch '/memos/:id' do
-  data_converted_to_ruby = load_data
-  edit_memo = data_converted_to_ruby['memos'].find { |memo| memo['id'] == params['id'].to_i }
+  memos_data = load_data
+  edit_memo = memos_data[:memos].find { |memo| memo[:id] == params[:id].to_i }
 
-  edit_memo['title'] = params['title']
-  edit_memo['message'] = params['message']
-  save_data(data_converted_to_ruby)
+  edit_memo[:title] = params[:title]
+  edit_memo[:message] = params[:message]
+  save_data(memos_data)
 
-  redirect "memos/#{params['id']}"
+  redirect "memos/#{params[:id]}"
 end
 
 # Delete
@@ -84,9 +83,9 @@ get '/memos/:id/delete_confirmation' do
 end
 
 delete '/memos/:id' do
-  data_converted_to_ruby = load_data
-  data_converted_to_ruby['memos'].delete_if { |memo| memo['id'] == params['id'].to_i }
-  save_data(data_converted_to_ruby)
+  memos_data = load_data
+  memos_data[:memos].delete_if { |memo| memo[:id] == params[:id].to_i }
+  save_data(memos_data)
 
   redirect '/'
 end
