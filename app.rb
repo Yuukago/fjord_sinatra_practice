@@ -6,8 +6,7 @@ enable :method_override
 
 def load_data
   json_text = File.read('db.json')
-  json_text = '{"last_id": 0, "memos": []}' if json_text.empty?
-  JSON.parse(json_text, symbolize_names: true)
+  json_text.empty? ? { last_id: 0, memos: [] } : JSON.parse(json_text, symbolize_names: true)
 end
 
 def save_data(record_data)
@@ -15,8 +14,8 @@ def save_data(record_data)
 end
 
 def find_memo(id)
-  memos_data = load_data
-  memos_data[:memos].find { |memo| memo[:id] == id }
+  memos = load_data
+  memos[:memos].find { |memo| memo[:id] == id }
 end
 
 helpers do
@@ -27,7 +26,7 @@ end
 
 # Top
 get '/' do
-  @memos_data = load_data
+  @memos = load_data
 
   erb :top
 end
@@ -40,52 +39,52 @@ end
 post '/memos' do
   redirect '/memos/new' if params[:title].empty?
 
-  memos_data = load_data
-  id = memos_data[:last_id] += 1
-  memo_data = params.slice(:title, :message).merge(id: id)
-  memos_data[:memos] << memo_data
+  memos = load_data
+  id = memos[:last_id] += 1
+  memo = params.slice(:title, :message).merge(id:)
+  memos[:memos] << memo
 
-  save_data(memos_data)
+  save_data(memos)
 
   redirect '/'
 end
 
 # Show
 get '/memos/:id' do
-  @target_memo = find_memo(params[:id].to_i)
+  @memo = find_memo(params[:id].to_i)
 
   erb :show
 end
 
 # Edit
 get '/memos/:id/edit' do
-  @target_memo = find_memo(params[:id].to_i)
+  @memo = find_memo(params[:id].to_i)
 
   erb :edit
 end
 
 patch '/memos/:id' do
-  memos_data = load_data
-  edit_memo = memos_data[:memos].find { |memo| memo[:id] == params[:id].to_i }
+  memos = load_data
+  edit_memo = memos[:memos].find { |memo| memo[:id] == params[:id].to_i }
 
   edit_memo[:title] = params[:title]
   edit_memo[:message] = params[:message]
-  save_data(memos_data)
+  save_data(memos)
 
   redirect "memos/#{params[:id]}"
 end
 
 # Delete
 get '/memos/:id/delete_confirmation' do
-  @target_memo = find_memo(params[:id].to_i)
+  @memo = find_memo(params[:id].to_i)
 
   erb :delete_confirmation
 end
 
 delete '/memos/:id' do
-  memos_data = load_data
-  memos_data[:memos].delete_if { |memo| memo[:id] == params[:id].to_i }
-  save_data(memos_data)
+  memos = load_data
+  memos[:memos].delete_if { |memo| memo[:id] == params[:id].to_i }
+  save_data(memos)
 
   redirect '/'
 end

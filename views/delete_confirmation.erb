@@ -1,12 +1,12 @@
 <p>本当に削除してよろしいですか？</p>
 <div class="display-wrapper">
-  <h2 class="display-title"><%= h(@target_memo[:title]) %></h2>
-  <p><%= h(@target_memo[:message]) %></p>
+  <h2 class="display-title"><%= h(@memo[:title]) %></h2>
+  <p><%= h(@memo[:message]) %></p>
 </div>
 
-<input type="button" onclick="location.href='/memos/<%= @target_memo[:id] %>'" value="戻る" class="return-button">
+<input type="button" onclick="location.href='/memos/<%= @memo[:id] %>'" value="戻る" class="return-button">
 
-<form action="/memos/<%= @target_memo[:id] %>" method="post">
+<form action="/memos/<%= @memo[:id] %>" method="post">
   <input type="hidden" name="_method" value="delete">
   <input type="submit" value="削除する" class="all-button">
 </form>
