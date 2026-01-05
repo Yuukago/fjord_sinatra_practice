@@ -1,0 +1,17 @@
+<p>変更したい内容を入力してください</p>
+
+<div class="form-box">
+  <form action="/memos/<%= @memo[:id] %>" method="post">
+    <input type="hidden" name="_method" value="patch">
+    <label for="title" class="invisible-label">
+      <input type="text" name="title" value="<%= @memo[:title] %>">
+    </label>
+    <label for="message" class="invisible-label">
+      <textarea name="message" rows="15" cols="20"><%= @memo[:message] %></textarea>
+    </label>
+
+    <input type="submit" value="修正する" class="all-button">
+  </form>
+
+  <input type="button" onclick="location.href='/memos/<%= @memo[:id] %>'" value="戻る" class="return-button">
+</div>

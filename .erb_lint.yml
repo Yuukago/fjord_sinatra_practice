@@ -1,0 +1,6 @@
+---
+glob: "**/*.erb"
+linters:
+  RequireInputAutocomplete:
+    enabled: false
+        
