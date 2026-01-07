@@ -2,20 +2,11 @@
 
 require 'sinatra'
 require 'sinatra/reloader'
+require 'pg'
 enable :method_override
 
-def load_data
-  json_text = File.read('db.json')
-  json_text.empty? ? { last_id: 0, memos: [] } : JSON.parse(json_text, symbolize_names: true)
-end
-
-def save_data(record_data)
-  File.open('db.json', 'w') { |file| file.write(JSON.generate(record_data)) }
-end
-
-def find_memo(id)
-  memos = load_data
-  memos[:memos].find { |memo| memo[:id] == id }
+def db
+  PG.connect(dbname: 'memos')
 end
 
 helpers do
@@ -24,14 +15,13 @@ helpers do
   end
 end
 
-# Top
 get '/' do
-  @memos = load_data
+  conn = db
+  @memos = conn.exec('SELECT * FROM memo')
 
   erb :top
 end
 
-# New
 get '/memos/new' do
   erb :new
 end
@@ -39,52 +29,43 @@ end
 post '/memos' do
   redirect '/memos/new' if params[:title].empty?
 
-  memos = load_data
-  id = memos[:last_id] += 1
-  memo = params.slice(:title, :message).merge(id:)
-  memos[:memos] << memo
-
-  save_data(memos)
+  conn = db
+  conn.exec_params('INSERT INTO memo (title, message) VALUES ($1, $2)', [params[:title], params[:message]])
 
   redirect '/'
 end
 
-# Show
 get '/memos/:id' do
-  @memo = find_memo(params[:id].to_i)
+  conn = db
+  @memo = conn.exec_params('SELECT * FROM memo WHERE memo_id = $1', [params[:id]]).to_a.first
 
   erb :show
 end
 
-# Edit
 get '/memos/:id/edit' do
-  @memo = find_memo(params[:id].to_i)
+  conn = db
+  @memo = conn.exec_params('SELECT * FROM memo WHERE memo_id = $1', [params[:id]]).to_a.first
 
   erb :edit
 end
 
 patch '/memos/:id' do
-  memos = load_data
-  edit_memo = memos[:memos].find { |memo| memo[:id] == params[:id].to_i }
-
-  edit_memo[:title] = params[:title]
-  edit_memo[:message] = params[:message]
-  save_data(memos)
+  conn = db
+  conn.exec_params('UPDATE memo SET title = $1, message = $2 WHERE memo_id = $3', [params[:title], params[:message], params[:id]])
 
   redirect "memos/#{params[:id]}"
 end
 
-# Delete
 get '/memos/:id/delete_confirmation' do
-  @memo = find_memo(params[:id].to_i)
+  conn = db
+  @memo = conn.exec_params('SELECT * FROM memo WHERE memo_id = $1', [params[:id]]).to_a.first
 
   erb :delete_confirmation
 end
 
 delete '/memos/:id' do
-  memos = load_data
-  memos[:memos].delete_if { |memo| memo[:id] == params[:id].to_i }
-  save_data(memos)
+  conn = db
+  conn.exec_params('DELETE FROM memo WHERE memo_id = $1', [params[:id]])
 
   redirect '/'
 end

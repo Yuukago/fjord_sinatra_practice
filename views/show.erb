@@ -1,9 +1,9 @@
 <div class="display-wrapper">
-  <h2 class="display-title"><%= h(@memo[:title]) %></h2>
-  <p><%= h(@memo[:message]) %></p>
-  <div class="delete-text"><a href="/memos/<%= @memo[:id] %>/delete_confirmation">削除</a></div>
+  <h2 class="display-title"><%= h(@memo['title']) %></h2>
+  <p><%= h(@memo['message']) %></p>
+  <div class="delete-text"><a href="/memos/<%= @memo['memo_id'] %>/delete_confirmation">削除</a></div>
 </div>
 
-<input type="button" onclick="location.href='/memos/<%= @memo[:id] %>/edit'" value="変更" class="all-button">
+<input type="button" onclick="location.href='/memos/<%= @memo['memo_id'] %>/edit'" value="変更" class="all-button">
 
 <input type="button" onclick="location.href='/'" value="戻る" class="return-button">
