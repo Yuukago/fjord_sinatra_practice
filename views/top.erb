@@ -1,7 +1,7 @@
 <button onclick="location.href='memos/new'">追加</button>
 
 <ul>
-  <% @memos.to_a.each do |memo| %>
+  <% @memos.each do |memo| %>
    <li>
       <a href='/memos/<%= memo["memo_id"] %>'><%= h(memo["title"]) %></a>
    </li>
