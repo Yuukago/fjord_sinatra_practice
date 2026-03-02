@@ -1,0 +1,5 @@
+CREATE TABLE memo(
+	memo_id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  title VARCHAR(100) NOT NULL,
+  message text
+);

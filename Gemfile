@@ -12,3 +12,5 @@ gem 'sinatra-contrib'
 group :development do
   gem 'rubocop-fjord', require: false
 end
+
+gem 'pg'
